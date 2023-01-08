@@ -3,7 +3,9 @@
 set -eux
 set -o pipefail
 
-while getopts 'v:l:p:n:c:' OPTION; do
+echo "INPUT ARGS: $@"
+
+while getopts 'v:l:p:n:db' OPTION; do
   case "$OPTION" in
     l)
       ARG_LABEL="$OPTARG"
@@ -21,39 +23,38 @@ while getopts 'v:l:p:n:c:' OPTION; do
       ARG_NAME="$OPTARG"
       echo "NAME: $ARG_NAME"
       ;;
-    c)
-      ARG_COMMAND="$OPTARG"
-      echo "COMMAND: '$ARG_COMMAND'"
+    d)
+      ARG_BACKGROUND=true
+      echo "BACKGROUND: '$ARG_COMMAND'"
+      ;;
+    b)
+      ARG_BASH=true
+      echo "BASH: '$ARG_BASH'"
       ;;
     ?)
-      echo "script usage: $(basename $0) [-l label] [-v volume] [-p port] [-c command]" >&2
+      echo "script usage: $(basename $0) [-l label] [-v volume] [-p port] [-d] [-b] [...]" >&2
       exit 1
       ;;
   esac
 done
 shift "$(($OPTIND -1))"
 
-JUPYTER_NAME="${ARG_NAME:-Jupyter}"
-JUPYTER_PORT=${ARG_PORT:-8888}
-JUPYTER_VOLUME="${ARG_VOLUME:-$(pwd)}"
-JUPYTER_LABEL="${ARG_LABEL:-latest}"
-JUPYTER_COMMAND="${ARG_COMMAND:-}"
+DOCKER_COMMAND='docker run -it --rm'
+DOCKER_COMMAND+=" --name ${ARG_NAME:-Jupyter}"
+DOCKER_COMMAND+=" -p ${ARG_PORT:-8888}:8888"
+DOCKER_COMMAND+=" -v ${ARG_VOLUME:-$(pwd)}:/home/jovyan/work"
+DOCKER_COMMAND+=" --workdir /home/jovyan/work"
 
-if [ -n "$JUPYTER_COMMAND" ]; then
-  JUPYTER_COMMAND="/bin/bash -c ${JUPYTER_COMMAND}"
+if [[ "${ARGS_BACKGROUND:-false}" = true ]]; then
+  DOCKER_COMMAND+=" -d"
 fi
 
-# if (( $# > 0)); then
-#   JUPYTER_BACKGROUND=""
-# else
-#   JUPYTER_BACKGROUND=" -d"
-# fi
+DOCKER_COMMAND+=" grzadr/worklab:${ARG_LABEL:-latest}"
 
-docker run -it \
-  -p ${JUPYTER_PORT}:8888 \
-  -v ${JUPYTER_VOLUME}:/home/jovyan/work \
-  --name ${JUPYTER_NAME} \
-  --rm \
-  --workdir /home/jovyan/work \
-  grzadr/worklab:${JUPYTER_LABEL} \
-  `${JUPYTER_COMMAND}`
+if [[ "${ARG_BASH:-false}" = true ]]; then
+  DOCKER_COMMAND+=' /bin/bash'
+elif (( $# > 0 )); then
+  DOCKER_COMMAND+=" /bin/bash -c \"$*\" --"
+fi
+
+eval $DOCKER_COMMAND

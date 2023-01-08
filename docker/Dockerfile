@@ -30,5 +30,8 @@ RUN apt update \
     >> build_logs/apt_install.log \
  && apt-vacuum
 
-# RUN chown -R jovyan:jovyan build_logs
+RUN chown -R jovyan:users build_logs
 USER jovyan
+
+RUN mkdir -p $HOME/.jupyter/lab/'@jupyterlab'
+COPY --chown=jovyan:users configs/lab/user-settings $HOME/.jupyter/lab/user-settings/'@jupyterlab'

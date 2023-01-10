@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -eux
+set -o pipefail
 
 DATE_TAG=$(date '+%F')
 IMAGE_TAG=${1:-${DATE_TAG}}

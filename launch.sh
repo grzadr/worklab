@@ -31,8 +31,12 @@ while getopts 'v:l:p:n:db' OPTION; do
       ARG_BASH=true
       echo "BASH: '$ARG_BASH'"
       ;;
+    i)
+      ARG_IMAGE="$OPTARG"
+      echo "IMAGE: '$ARG_IMAGE'"
+      ;;
     ?)
-      echo "script usage: $(basename $0) [-l label] [-v volume] [-p port] [-d] [-b] [...]" >&2
+      echo "script usage: $(basename $0) [-i image] [-l label] [-v volume] [-p port] [-d] [-b] [...]" >&2
       exit 1
       ;;
   esac
@@ -49,7 +53,7 @@ if [[ "${ARGS_BACKGROUND:-false}" = true ]]; then
   DOCKER_COMMAND+=" -d"
 fi
 
-DOCKER_COMMAND+=" grzadr/worklab:${ARG_LABEL:-latest}"
+DOCKER_COMMAND+=" ${ARG_IMAGE:-grzadr/worklab}:${ARG_LABEL:-latest}"
 
 if [[ "${ARG_BASH:-false}" = true ]]; then
   DOCKER_COMMAND+=' /bin/bash'

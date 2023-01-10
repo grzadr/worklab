@@ -9,7 +9,6 @@ sed -i.old "s/LABEL version=[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}/LABEL version=${IMA
 
 IMAGE_NAME="grzadr/worklab"
 # python3 update_readme.py
-docker rmi jupyter/minimal-notebook:latest
 docker build --pull \
   -t "${IMAGE_NAME}:${IMAGE_TAG}" \
   .

@@ -5,7 +5,7 @@ set -o pipefail
 
 echo "INPUT ARGS: $@"
 
-while getopts 'v:l:p:n:db' OPTION; do
+while getopts 'v:l:p:n:bdr' OPTION; do
   case "$OPTION" in
     l)
       ARG_LABEL="$OPTARG"
@@ -35,6 +35,10 @@ while getopts 'v:l:p:n:db' OPTION; do
       ARG_IMAGE="$OPTARG"
       echo "IMAGE: '$ARG_IMAGE'"
       ;;
+    r)
+      ARG_ROOT=true
+      echo "ROOT: $ARG_ROOT"
+      ;;
     ?)
       echo "script usage: $(basename $0) [-i image] [-l label] [-v volume] [-p port] [-d] [-b] [...]" >&2
       exit 1
@@ -48,6 +52,10 @@ DOCKER_COMMAND+=" --name ${ARG_NAME:-Jupyter}"
 DOCKER_COMMAND+=" -p ${ARG_PORT:-8888}:8888"
 DOCKER_COMMAND+=" -v ${ARG_VOLUME:-$(pwd)}:/home/jovyan/work"
 DOCKER_COMMAND+=" --workdir /home/jovyan/work"
+
+if [[ "${ARG_ROOT:-false}" = true ]]; then
+  DOCKER_COMMAND+=" -u root"
+fi
 
 if [[ "${ARGS_BACKGROUND:-false}" = true ]]; then
   DOCKER_COMMAND+=" -d"

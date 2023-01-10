@@ -1,8 +1,8 @@
+ARG JUPYTER_IMAGE_NAME='jupyter/minimal-notebook'
 ARG JUPYTER_IMAGE_TAG=':latest'
 
-FROM "jupyter/minimal-notebook${JUPYTER_IMAGE_TAG}"
+FROM "${JUPYTER_IMAGE_NAME}${JUPYTER_IMAGE_TAG}"
 
-LABEL version=2023-01-10
 LABEL maintainer="Adrian Grzemski <adrian.grzemski@gmail.com>"
 
 USER root

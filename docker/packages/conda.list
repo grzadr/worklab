@@ -1,0 +1,42 @@
+### General Software
+python
+sqlite
+cmake
+zstd
+
+### R Project
+r-base
+r-devtools
+r-tidyverse
+r-ggplot2
+r-rmarkdown
+r-markdown
+
+### Python Modules
+natsort
+cython
+sqlalchemy
+beautifulsoup4
+autopep8
+black
+flake8-black
+flake8
+mypy
+pylint
+yapf
+pytest
+setuptools
+
+### Python Scientific Modules
+matplotlib
+numpy
+scipy
+statsmodels
+scikit-learn
+seaborn
+pandas
+pandoc
+ipython
+dask
+nltk
+spacy
